@@ -36,7 +36,7 @@ export const api = {
 };
 
 // Mapeo de categorías a iconos y nombres en español
-export const categoryConfig = {
+export const categoryConfig: { [key: string]: { name: string; icon: string; } } = {
   smartphones: { name: 'Smartphones', icon: '📱' },
   laptops: { name: 'Laptops', icon: '💻' },
   fragrances: { name: 'Fragancias', icon: '🌸' },

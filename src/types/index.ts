@@ -1,4 +1,7 @@
+import { ReactNode } from "react";
+
 export interface Product {
+    stock: ReactNode;
     thumbnail: string;
     id: number;
     title: string;
@@ -7,10 +10,7 @@ export interface Product {
     category: string;
     image: string;
     weight?: number;
-    rating?: {
-      rate: number;
-      count: number;
-    };
+    rating: number;
   }
   
   export interface Category {
