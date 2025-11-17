@@ -3,6 +3,12 @@ import { Product } from '../types';
 
 const API_BASE_URL = 'https://dummyjson.com';
 
+export interface Category {
+  slug: string;
+  name: string;
+  url: string;
+}
+
 export const api = {
   // Obtener todos los productos
   getAllProducts: async (limit = 100): Promise<Product[]> => {
@@ -29,7 +35,7 @@ export const api = {
   },
 
   // Obtener todas las categorías
-  getCategories: async (): Promise<string[]> => {
+  getCategories: async (): Promise<Category[]> => {
     const response = await axios.get(`${API_BASE_URL}/products/categories`);
     return response.data;
   },

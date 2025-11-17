@@ -19,6 +19,12 @@ export default function RegisterScreen() {
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const onSubmit = (data: RegisterFormData) => {

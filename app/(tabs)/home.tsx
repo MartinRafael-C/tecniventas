@@ -11,9 +11,15 @@ import { SearchBar } from '../../src/components/SearchBar';
 import { CategoryCard } from '../../src/components/CategoryCard';
 import { api, categoryConfig } from '../../src/services/api';
 
+interface Category {
+  slug: string;
+  name: string;
+  url: string;
+}
+
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,16 +40,16 @@ export default function HomeScreen() {
   const handleSearch = () => {
     if (searchQuery.trim()) {
       router.push({
-        pathname: "/category-list",
-        params: { search: searchQuery }
+        pathname: '/category-list',
+        params: { search: searchQuery },
       });
     }
   };
 
-  const handleCategoryPress = (category: string) => {
+  const handleCategoryPress = (category: Category) => {
     router.push({
-      pathname: "/category-list",
-      params: { category }
+      pathname: '/category-list',
+      params: { category: category.slug },
     });
   };
 
@@ -79,9 +85,9 @@ export default function HomeScreen() {
           scrollEnabled={false}
           contentContainerStyle={{ paddingHorizontal: 8 }}
           renderItem={({ item }) => {
-            const config = categoryConfig[item] || {
-              name: item,
-              icon: "📦",
+            const config = categoryConfig[item.slug] || {
+              name: item.name,
+              icon: '📦',
             };
 
             return (
@@ -92,7 +98,7 @@ export default function HomeScreen() {
               />
             );
           }}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.slug}
         />
       </ScrollView>
     </View>
