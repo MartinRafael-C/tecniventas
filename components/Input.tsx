@@ -1,17 +1,40 @@
-// components/Input.jsx
+// components/Input.tsx
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
-const Input = ({ label, error, ...props }) => {
+interface InputProps extends TextInputProps {
+  label?: string;
+  error?: string;
+}
+
+const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text style={[styles.label, { color: theme.text }]}>
+          {label}
+        </Text>
+      )}
       <TextInput
         {...props}
-        style={[styles.input, error && styles.inputError]}
-        placeholderTextColor="#9ca3af"
+        style={[
+          styles.input, 
+          { 
+            color: theme.text,
+            backgroundColor: theme.card,
+            borderColor: error ? theme.error : theme.border,
+          }
+        ]}
+        placeholderTextColor={theme.textSecondary}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <Text style={[styles.errorText, { color: theme.error }]}>
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -23,7 +46,6 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-    color: '#374151',
     fontWeight: '500',
     fontSize: 14,
   },
@@ -32,15 +54,9 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#e5e7eb',
     fontSize: 16,
-    backgroundColor: 'white',
-  },
-  inputError: {
-    borderColor: '#ef4444',
   },
   errorText: {
-    color: '#ef4444',
     fontSize: 12,
     marginTop: 4,
   },

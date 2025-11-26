@@ -1,19 +1,44 @@
-// components/SearchBar.jsx
+// components/SearchBar.tsx
 import React from 'react';
-import { View, TextInput, Text, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
 
-const SearchBar = ({ value, onChangeText, placeholder = "Buscar productos..." }) => {
+interface SearchBarProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ 
+  value, 
+  onChangeText, 
+  placeholder = "Buscar productos..." 
+}) => {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
-      <View style={styles.searchBox}>
-        <Text style={styles.icon}>🔍</Text>
+      <View style={[styles.searchBox, { 
+        backgroundColor: theme.card,
+        borderColor: theme.border,
+      }]}>
+        <Ionicons name="search" size={20} color={theme.textSecondary} />
         <TextInput
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
-          style={styles.input}
-          placeholderTextColor="#9ca3af"
+          style={[styles.input, { color: theme.text }]}
+          placeholderTextColor={theme.textSecondary}
         />
+        {value.length > 0 && (
+          <Ionicons 
+            name="close-circle" 
+            size={20} 
+            color={theme.textSecondary}
+            onPress={() => onChangeText('')}
+          />
+        )}
       </View>
     </View>
   );
@@ -26,10 +51,11 @@ const styles = StyleSheet.create({
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 12,
+    gap: 10,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -39,14 +65,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  icon: {
-    fontSize: 20,
-    marginRight: 12,
-  },
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#1f2937',
   },
 });
 

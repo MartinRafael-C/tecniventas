@@ -1,15 +1,18 @@
-// screens/AIScreen.jsx
+// screens/AIScreen.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, ScrollView, TextInput, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
 import Button from '../components/Button';
 
-const AIScreen = () => {
+const AIScreen: React.FC = () => {
+  const { theme } = useTheme();
   const [messages, setMessages] = useState([
     { role: 'assistant', content: '¡Hola! Soy tu asistente de compras con IA. ¿En qué puedo ayudarte hoy?' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -38,7 +41,7 @@ const AIScreen = () => {
       });
 
       const data = await response.json();
-      const aiResponse = data.content?.find(c => c.type === 'text')?.text || 
+      const aiResponse = data.content?.find((c: any) => c.type === 'text')?.text || 
                         'Lo siento, no pude procesar tu solicitud.';
       
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
@@ -55,12 +58,13 @@ const AIScreen = () => {
 
   return (
     <KeyboardAvoidingView 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={100}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>⭐ Asistente IA</Text>
+        <Ionicons name="sparkles" size={28} color={theme.primary} />
+        <Text style={[styles.title, { color: theme.text }]}>Asistente IA</Text>
       </View>
 
       <ScrollView 
@@ -74,12 +78,12 @@ const AIScreen = () => {
             key={idx}
             style={[
               styles.messageBubble,
-              msg.role === 'user' ? styles.userBubble : styles.assistantBubble
+              msg.role === 'user' ? styles.userBubble : [styles.assistantBubble, { backgroundColor: theme.card }]
             ]}
           >
             <Text style={[
               styles.messageText,
-              msg.role === 'user' && styles.userText
+              msg.role === 'user' ? styles.userText : { color: theme.text }
             ]}>
               {msg.content}
             </Text>
@@ -87,28 +91,39 @@ const AIScreen = () => {
         ))}
         {loading && (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Escribiendo...</Text>
+            <Text style={[styles.loadingText, { color: theme.textSecondary }]}>
+              Escribiendo...
+            </Text>
           </View>
         )}
       </ScrollView>
       
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={input}
-          onChangeText={setInput}
-          onSubmitEditing={sendMessage}
-          placeholder="Escribe tu mensaje..."
-          style={styles.input}
-          placeholderTextColor="#9ca3af"
-          multiline
-        />
-        <Button 
-          onPress={sendMessage} 
-          disabled={loading || !input.trim()}
-          style={styles.sendButton}
-        >
-          Enviar
-        </Button>
+      <View style={[styles.inputContainer, { 
+        backgroundColor: theme.surface,
+        borderTopColor: theme.border,
+      }]}>
+        <View style={[styles.inputWrapper, { 
+          backgroundColor: theme.card,
+          borderColor: theme.border,
+        }]}>
+          <TextInput
+            value={input}
+            onChangeText={setInput}
+            onSubmitEditing={sendMessage}
+            placeholder="Escribe tu mensaje..."
+            style={[styles.input, { color: theme.text }]}
+            placeholderTextColor={theme.textSecondary}
+            multiline
+            maxLength={500}
+          />
+          <Button 
+            onPress={sendMessage} 
+            disabled={loading || !input.trim()}
+            style={styles.sendButton}
+          >
+            <Ionicons name="send" size={20} color="white" />
+          </Button>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -117,16 +132,16 @@ const AIScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 20,
-    paddingBottom: 10,
+    gap: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1f2937',
   },
   messagesContainer: {
     flex: 1,
@@ -138,8 +153,8 @@ const styles = StyleSheet.create({
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 16,
+    marginBottom: 12,
   },
   userBubble: {
     alignSelf: 'flex-end',
@@ -147,11 +162,9 @@ const styles = StyleSheet.create({
   },
   assistantBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#f3f4f6',
   },
   messageText: {
     fontSize: 16,
-    color: '#1f2937',
     lineHeight: 22,
   },
   userText: {
@@ -162,28 +175,35 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   loadingText: {
-    color: '#6b7280',
     fontStyle: 'italic',
   },
   inputContainer: {
-    flexDirection: 'row',
     padding: 12,
-    gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    backgroundColor: '#ffffff',
+    paddingBottom: 100,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
+    borderWidth: 1,
   },
   input: {
     flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#e5e7eb',
     fontSize: 16,
     maxHeight: 100,
+    paddingVertical: 8,
   },
   sendButton: {
-    alignSelf: 'flex-end',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

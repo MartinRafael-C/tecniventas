@@ -1,10 +1,12 @@
 // screens/ProductListScreen.jsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 import ProductCard from '../components/ProductCard';
-import { fetchProductsByCategory } from '../services/apiService.ts';
+import { fetchProductsByCategory } from '../services/apiService';
 
 const ProductListScreen = ({ category, onSelectProduct, favorites, onToggleFavorite }) => {
+  const { theme } = useTheme();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,18 +35,18 @@ const ProductListScreen = ({ category, onSelectProduct, favorites, onToggleFavor
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
         <Text style={styles.loadingEmoji}>⏳</Text>
-        <ActivityIndicator size="large" color="#667eea" />
-        <Text style={styles.loadingText}>Cargando productos...</Text>
+        <ActivityIndicator size="large" color={theme.primary} />
+        <Text style={[styles.loadingText, { color: theme.textSecondary }]}>Cargando productos...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
       <View style={styles.content}>
-        <Text style={styles.title}>{categoryNames[category]}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{categoryNames[category]}</Text>
         
         <View style={styles.grid}>
           {products.map((product) => (
@@ -66,7 +68,6 @@ const ProductListScreen = ({ category, onSelectProduct, favorites, onToggleFavor
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   content: {
     padding: 20,
@@ -90,7 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
   },
   loadingEmoji: {
     fontSize: 48,
